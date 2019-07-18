@@ -25,7 +25,8 @@
     }
   },
   "scripts": {
-    "build": "ng-packagr -p package.json"
+    "build": "ng-packagr -p package.json",
+    "publish-dist": "yarn publish dist --access public"
   },
   "peerDependencies": {
     "@ngrx/effects": "^8.1.0",
