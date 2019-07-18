@@ -1,10 +1,37 @@
 {
-  "name": "ngrx-util",
+  "$schema": "./node_modules/ng-packagr/package.schema.json",
+  "name": "@zeit-dev/ngrx-util",
   "version": "1.0.0",
-  "description": "Utility classes, functions i commonly use acress ngrx projects.",
+  "description": "Utility classes, functions we commonly use across ngrx projects.",
   "main": "index.js",
   "repository": "https://github.com/cice/ngrx-util",
   "author": "Marian Theisen",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "@angular/compiler": "^8.1.2",
+    "@angular/compiler-cli": "^8.1.2",
+    "@angular/core": "^8.1.2",
+    "ng-packagr": "^5.3.0",
+    "tslib": "^1.9.0",
+    "typescript": ">=3.4 <3.5"
+  },
+  "ngPackage": {
+    "lib": {
+      "entryFile": "lib/public-api.ts",
+      "umdModuleIds": {
+        "@ngrx/store": "@ngrx/store",
+        "@ngrx/effects": "@ngrx/effects"
+      }
+    }
+  },
+
+  "scripts": {
+    "build": "ng-packagr -p package.json"
+  },
+  "peerDependencies": {
+    "@ngrx/effects": "^8.1.0",
+    "@ngrx/store": "^8.1.0",
+    "rxjs": "^6.5.2"
+  }
 }
