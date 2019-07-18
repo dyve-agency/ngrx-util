@@ -1,0 +1,10 @@
+{
+  "name": "ngrx-util",
+  "version": "1.0.0",
+  "description": "Utility classes, functions i commonly use acress ngrx projects.",
+  "main": "index.js",
+  "repository": "https://github.com/cice/ngrx-util",
+  "author": "Marian Theisen",
+  "license": "MIT",
+  "private": false
+}
