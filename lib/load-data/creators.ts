@@ -1,6 +1,6 @@
 import {ofType} from '@ngrx/effects';
 import {Action, createAction, On, on, props} from '@ngrx/store';
-import {Observable, ObservedValueOf, of, pipe, UnaryFunction} from 'rxjs';
+import {Observable, of, pipe} from 'rxjs';
 import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
 import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
 
@@ -37,7 +37,7 @@ export function createLoadEffect<T, P, S>(
   actions: LoadActions<T, P>,
   loadAndMap: (params: P, state: S) => Observable<T>,
   state$: Observable<S>,
-): UnaryFunction<Observable<Action>, Observable<ObservedValueOf<Observable<unknown>>>> {
+) {
   return pipe(
     ofType(actions.load),
     withLatestFrom(state$),
