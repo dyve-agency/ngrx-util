@@ -27,7 +27,6 @@ export function initial<T, P>(initialValue: T): ResourceState<T, P> {
 
 export interface LoadActions<T, P = void> {
   load: ActionCreator<string, (props: ParamsPayload<P>) => ParamsPayload<P> & TypedAction<string>>;
-  success: ActionCreator<string, (props: LoadActionPayload<T>) => LoadActionPayload<T> & TypedAction<string>>;
-  failed: ActionCreator<string, () => TypedAction<string>>;
+  success: ActionCreator<string, (props: LoadActionPayload<T> & ParamsPayload<P>) => LoadActionPayload<T> & ParamsPayload<P> & TypedAction<string>>;
+  failed: ActionCreator<string, (props: ParamsPayload<P>) => ParamsPayload<P> & TypedAction<string>>;
 }
-

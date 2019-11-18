@@ -48,16 +48,6 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@ngrx/effects@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-8.1.0.tgz#76245d6d8658fbe84d610ade4016cc7d6091d09a"
-  integrity sha512-JQKD39Itsq70Mlq8kJ/yQuVbM08luAUexMqyi5HECe8izyRNkcIGJFh/2VkQSMLUGSNkU7qnT7y7xug8GA+AGA==
-
-"@ngrx/store@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-8.1.0.tgz#2ef648c591b2a56529a40ab3081327c49fb8ca93"
-  integrity sha512-1Pfe8uLoEjfLyXpX2UoqeSzYz4yPhsTlMVHIP7EybLD9YC/IrhecnCMmBCkNpJDRBQYqmJPbfUBrp8/q9wcB6g==
-
 "@ngtools/json-schema@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ngtools/json-schema/-/json-schema-1.1.0.tgz#c3a0c544d62392acc2813a42c8a0dc6f58f86922"
@@ -808,6 +798,13 @@ execa@^1.0.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
+executioner@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/executioner/-/executioner-2.0.1.tgz#add328e03bc45dd598f358fbb529fc0be0ec6fcd"
+  integrity sha1-rdMo4DvEXdWY81j7tSn8C+Dsb80=
+  dependencies:
+    mixly "^1.0.0"
+
 expand-brackets@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/expand-brackets/-/expand-brackets-2.1.4.tgz#b77735e315ce30f6b6eff0f83b04151a22449622"
@@ -963,6 +960,11 @@ fsevents@^2.0.6:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.0.7.tgz#382c9b443c6cbac4c57187cdda23aa3bf1ccfc2a"
   integrity sha512-a7YT0SV3RB+DjYcppwVDLtn13UQnmg0SWZS7ezZD0UjnLwXmy8Zm21GMVGLaFGimIqcvyMQaOJBrop8MyOp1kQ==
+
+fulcon@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/fulcon/-/fulcon-1.0.2.tgz#8a4dfda4c73fcd9cc62a79d5045c392b45547320"
+  integrity sha1-ik39pMc/zZzGKnnVBFw5K0VUcyA=
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -1211,6 +1213,14 @@ injection-js@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/injection-js/-/injection-js-2.2.1.tgz#a8d6a085b2f0b8d8650f6f4487f6abb8cc0d67ce"
   integrity sha512-zHI+E+dM0PXix5FFTO1Y4/UOyAzE7zG1l/QwAn4jchTThOoBq+UYRFK4AVG7lQgFL+go62SbrzSsjXy9DFEZUg==
+
+install-peers-cli@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/install-peers-cli/-/install-peers-cli-2.1.1.tgz#01f88b52a930b7f09e57abb4da874ff9ef83a6b9"
+  integrity sha512-sCphUqbDtlSyv0KYE0tdsLUG/F6wMGR7hr3swkx1sAKJCj4b3hy41vTj0JtxL6pAoi86yGW8i1CCIv8Fg29NAA==
+  dependencies:
+    commander "^2.20.0"
+    executioner "^2.0.1"
 
 invert-kv@^2.0.0:
   version "2.0.0"
@@ -1724,6 +1734,13 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
+
+mixly@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mixly/-/mixly-1.0.0.tgz#9b5a2e1f63e6dfba0d30e6797ffae62ab1dc24ef"
+  integrity sha1-m1ouH2Pm37oNMOZ5f/rmKrHcJO8=
+  dependencies:
+    fulcon "^1.0.1"
 
 mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1:
   version "0.5.1"
@@ -2414,7 +2431,7 @@ rollup@^1.12.1:
     "@types/node" "^12.6.2"
     acorn "^6.2.0"
 
-rxjs@^6.0.0, rxjs@^6.5.2:
+rxjs@^6.0.0:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
   integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==

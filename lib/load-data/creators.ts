@@ -7,8 +7,8 @@ import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
 export function createLoadActions<T, P = void>(resource: string): LoadActions<T, P> {
   return {
     load: createAction(`[${resource}] Load`, props<ParamsPayload<P>>()),
-    success: createAction(`[${resource}] Load Success`, props<LoadActionPayload<T>>()),
-    failed: createAction(`[${resource}] Load Failed`),
+    success: createAction(`[${resource}] Load Success`, props<LoadActionPayload<T> & ParamsPayload<P>>()),
+    failed: createAction(`[${resource}] Load Failed`, props<ParamsPayload<P>>()),
   };
 }
 
@@ -41,8 +41,11 @@ export function createLoadEffect<T, P, S>(
   return pipe(
     ofType(actions.load),
     withLatestFrom(state$),
-    exhaustMap(([action, state]) => loadAndMap(action.params, state)),
-    map((response) => actions.success({data: response})),
-    catchError(() => of(actions.failed())),
+    exhaustMap(([action, state]) => {
+      return loadAndMap(action.params, state).pipe(
+        map((response) => actions.success({data: response, params: action.params})),
+        catchError(() => of(actions.failed({params: action.params}))),
+      );
+    }),
   );
 }
