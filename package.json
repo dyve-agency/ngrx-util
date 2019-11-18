@@ -1,6 +1,6 @@
 {
   "name": "@zeit-dev/ngrx-util",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Utility classes, functions we commonly use across ngrx projects.",
   "repository": "https://github.com/cice/ngrx-util",
   "author": "Marian Theisen <marian@cice-online.net>",
