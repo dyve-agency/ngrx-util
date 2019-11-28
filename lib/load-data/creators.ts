@@ -17,17 +17,19 @@ export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): O
     on<LoadActions<T, P>['load'], S>(actions.load, (state: S, action: ParamsPayload<P> & Action) => ({
       ...state,
       loading: true,
-      lastParams: action.params,
+      loadingParams: action.params,
     })),
     on<LoadActions<T, P>['success'], S>(actions.success, (state: S, action: LoadActionPayload<T> & Action) => ({
       ...state,
       loading: false,
+      loadingParams: undefined,
       loaded: true,
       results: action.data,
     })),
     on<S>(actions.failed, (state: S) => ({
       ...state,
       loading: false,
+      loadingParams: undefined,
       loaded: false,
     })),
   ];

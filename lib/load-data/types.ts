@@ -14,6 +14,7 @@ export interface ResourceState<T, P = void> {
   loading: boolean;
   results: T;
   lastParams: P | undefined;
+  loadingParams: P | undefined;
 }
 
 export function initial<T, P>(initialValue: T): ResourceState<T, P> {
@@ -22,6 +23,7 @@ export function initial<T, P>(initialValue: T): ResourceState<T, P> {
     loading: false,
     results: initialValue,
     lastParams: undefined,
+    loadingParams: undefined,
   };
 }
 
