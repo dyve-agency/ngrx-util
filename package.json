@@ -1,6 +1,6 @@
 {
   "name": "@zeit-dev/ngrx-util",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Utility classes, functions we commonly use across ngrx projects.",
   "repository": "https://github.com/cice/ngrx-util",
   "author": "Marian Theisen <marian@cice-online.net>",
@@ -28,9 +28,10 @@
   "scripts": {
     "build": "ng-packagr -p package.json",
     "publish-dist": "yarn publish dist --access public",
-    "install-peers": "install-peers"
+    "install-peers": "install-peers --force-run"
   },
   "peerDependencies": {
+    "@angular/core": "^8.1.2",
     "@ngrx/effects": "^8.1.0",
     "@ngrx/store": "^8.1.0",
     "rxjs": "^6.5.2"

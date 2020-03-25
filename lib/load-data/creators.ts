@@ -1,3 +1,4 @@
+import {ErrorHandler} from '@angular/core';
 import {ofType} from '@ngrx/effects';
 import {Action, createAction, On, on, props} from '@ngrx/store';
 import {Observable, of, pipe} from 'rxjs';
@@ -43,6 +44,7 @@ export function createLoadEffect<T, P, S>(
   actions: LoadActions<T, P>,
   loadAndMap: (params: P, state: S) => Observable<T>,
   state$: Observable<S>,
+  errorHandler?: ErrorHandler,
 ) {
   return pipe(
     ofType(actions.load),
@@ -50,7 +52,12 @@ export function createLoadEffect<T, P, S>(
     exhaustMap(([action, state]) => {
       return loadAndMap(action.params, state).pipe(
         map((response) => actions.success({data: response, params: action.params})),
-        catchError(() => of(actions.failed({params: action.params}))),
+        catchError((e) => {
+          if (errorHandler) {
+            errorHandler.handleError(e);
+          }
+          return of(actions.failed({params: action.params}));
+        }),
       );
     }),
   );
