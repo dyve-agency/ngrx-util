@@ -1,3 +1,7 @@
+/** @packageDocumentation
+ * @module simple-loadable-data
+ */
+
 import {ErrorHandler} from '@angular/core';
 import {ofType} from '@ngrx/effects';
 import {Action, createAction, On, on, props} from '@ngrx/store';
@@ -5,6 +9,11 @@ import {Observable, of, pipe} from 'rxjs';
 import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
 import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
 
+/**
+ * Creates a set of {@link LoadActions}
+ *
+ * @param resource a unique name for this loaded resource.
+ */
 export function createLoadActions<T, P = void>(resource: string): LoadActions<T, P> {
   return {
     load: createAction(`[${resource}] Load`, props<ParamsPayload<P>>()),
@@ -13,6 +22,12 @@ export function createLoadActions<T, P = void>(resource: string): LoadActions<T,
   };
 }
 
+/**
+ * Creates the reducer hooks necessary to reflect the current loading
+ * state + loaded data in the state.
+ *
+ * @param actions
+ */
 export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): On<S>[] {
   return [
     on<LoadActions<T, P>['load'], S>(actions.load, (state: S, action: ParamsPayload<P> & Action) => ({
@@ -40,6 +55,15 @@ export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): O
   ];
 }
 
+/**
+ * Creates a load-effect for the given load-actions
+ *
+ * @param actions the set of load-action that represent the loading events
+ * @param loadAndMap a function that returns an observable with the requested data,
+ *                   this is usually the API request to the backend.
+ * @param state$ the state observable (store)
+ * @param errorHandler an optional (Angular) error handler to report failures to
+ */
 export function createLoadEffect<T, P, S>(
   actions: LoadActions<T, P>,
   loadAndMap: (params: P, state: S) => Observable<T>,
