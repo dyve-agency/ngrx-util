@@ -10,5 +10,4 @@ describe('load-data/creators', () => {
       expect(actions.failed.type).toEqual('[foobar] Load Failed')
     })
   });
-
 });
