@@ -19,7 +19,9 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - run: yarn install --frozen-lockfile
+      - run: |
+          yarn install --frozen-lockfile
+          yarn install-peers
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
         env:
