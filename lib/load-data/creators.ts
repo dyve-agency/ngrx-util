@@ -14,11 +14,11 @@ import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
  *
  * @param resource a unique name for this loaded resource.
  */
-export function createLoadActions<T, P = void>(resource: string): LoadActions<T, P> {
+export function createLoadActions<TResource, TParams = void>(resource: string): LoadActions<TResource, TParams> {
   return {
-    load: createAction(`[${resource}] Load`, props<ParamsPayload<P>>()),
-    success: createAction(`[${resource}] Load Success`, props<LoadActionPayload<T> & ParamsPayload<P>>()),
-    failed: createAction(`[${resource}] Load Failed`, props<ParamsPayload<P>>()),
+    load: createAction(`[${resource}] Load`, props<ParamsPayload<TParams>>()),
+    success: createAction(`[${resource}] Load Success`, props<LoadActionPayload<TResource> & ParamsPayload<TParams>>()),
+    failed: createAction(`[${resource}] Load Failed`, props<ParamsPayload<TParams>>()),
   };
 }
 
@@ -28,16 +28,16 @@ export function createLoadActions<T, P = void>(resource: string): LoadActions<T,
  *
  * @param actions
  */
-export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): On<S>[] {
+export function createLoadReducer<TResource, TState, TParams = void>(actions: LoadActions<TResource, TParams>): On<TState>[] {
   return [
-    on<LoadActions<T, P>['load'], S>(actions.load, (state: S, action: ParamsPayload<P> & Action) => ({
+    on<LoadActions<TResource, TParams>['load'], TState>(actions.load, (state: TState, action: ParamsPayload<TParams> & Action) => ({
       ...state,
       loading: true,
       loadingParams: action.params,
     })),
-    on<LoadActions<T, P>['success'], S>(
+    on<LoadActions<TResource, TParams>['success'], TState>(
       actions.success,
-      (state: S, action: LoadActionPayload<T> & ParamsPayload<P> & Action) => ({
+      (state: TState, action: LoadActionPayload<TResource> & ParamsPayload<TParams> & Action) => ({
         ...state,
         loading: false,
         loadingParams: undefined,
@@ -46,7 +46,7 @@ export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): O
         results: action.data,
       }),
     ),
-    on<S>(actions.failed, (state: S) => ({
+    on<TState>(actions.failed, (state: TState) => ({
       ...state,
       loading: false,
       loadingParams: undefined,
@@ -61,13 +61,13 @@ export function createLoadReducer<T, S, P = void>(actions: LoadActions<T, P>): O
  * @param actions the set of load-action that represent the loading events
  * @param loadAndMap a function that returns an observable with the requested data,
  *                   this is usually the API request to the backend.
- * @param state$ the state observable (store)
+ * @param state$ the state observable (store, or a selected sub-state to be used in `loadAndMap`)
  * @param errorHandler an optional (Angular) error handler to report failures to
  */
-export function createLoadEffect<T, P, S>(
-  actions: LoadActions<T, P>,
-  loadAndMap: (params: P, state: S) => Observable<T>,
-  state$: Observable<S>,
+export function createLoadEffect<TResource, TParams, TState>(
+  actions: LoadActions<TResource, TParams>,
+  loadAndMap: (params: TParams, state: TState) => Observable<TResource>,
+  state$: Observable<TState>,
   errorHandler?: ErrorHandler,
 ) {
   return pipe(

@@ -16,7 +16,7 @@ export interface ParamsPayload<P> {
 /**
  * Simple wrapper for loaded data in the state.
  */
-export interface ResourceState<T, P = void> {
+export interface ResourceState<TResource, TParams = void> {
   /**
    * Has this resource been loaded?
    * `true` *after* the success action
@@ -35,19 +35,19 @@ export interface ResourceState<T, P = void> {
    * The stores the loaded data.
    * If no data has been loaded yet, contains the initial value (see {@link initial}).
    */
-  results: T;
+  results: TResource;
 
   /**
    * If data has been loaded, and was loaded with params,
    * stores these params of the last request.
    */
-  lastParams: P | undefined;
+  lastParams: TParams | undefined;
 
   /**
    * If data is currently loading, and loading was requested with params,
    * stores these params.
    */
-  loadingParams: P | undefined;
+  loadingParams: TParams | undefined;
 }
 
 /**
