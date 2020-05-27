@@ -13,6 +13,9 @@
     "@angular/core": ">= 8.0.0 < 10.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^3.0.1",
+    "@typescript-eslint/parser": "^3.0.1",
+    "eslint": "^7.1.0",
     "install-peers-cli": "^2.1.1",
     "jest": "^26.0.0",
     "jest-marbles": "^2.5.1",
@@ -40,7 +43,9 @@
     "test": "jest",
     "preversion": "yarn test",
     "postversion": "yarn build && git push --tags && yarn publish dist --non-interactive --access public --tag latest && git push && echo \"Successfully released version $npm_package_version!\"",
-    "install-peers": "install-peers --force-run"
+    "install-peers": "install-peers --force-run",
+    "lint": "yarn eslint . --ext .ts",
+    "lint:fix": "yarn lint --fix"
   },
   "peerDependencies": {
     "@angular/core": ">= 8.0.0 < 10.0",

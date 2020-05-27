@@ -5,7 +5,7 @@
 import {ErrorHandler} from '@angular/core';
 import {ofType} from '@ngrx/effects';
 import {Action, createAction, On, on, props} from '@ngrx/store';
-import {Observable, of, pipe} from 'rxjs';
+import {Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
 import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
 
@@ -30,11 +30,14 @@ export function createLoadActions<TResource, TParams = void>(resource: string): 
  */
 export function createLoadReducer<TResource, TState, TParams = void>(actions: LoadActions<TResource, TParams>): On<TState>[] {
   return [
-    on<LoadActions<TResource, TParams>['load'], TState>(actions.load, (state: TState, action: ParamsPayload<TParams> & Action) => ({
-      ...state,
-      loading: true,
-      loadingParams: action.params,
-    })),
+    on<LoadActions<TResource, TParams>['load'], TState>(
+      actions.load,
+      (state: TState, action: ParamsPayload<TParams> & Action) => ({
+        ...state,
+        loading: true,
+        loadingParams: action.params,
+      }),
+    ),
     on<LoadActions<TResource, TParams>['success'], TState>(
       actions.success,
       (state: TState, action: LoadActionPayload<TResource> & ParamsPayload<TParams> & Action) => ({
@@ -69,7 +72,7 @@ export function createLoadEffect<TResource, TParams, TState>(
   loadAndMap: (params: TParams, state: TState) => Observable<TResource>,
   state$: Observable<TState>,
   errorHandler?: ErrorHandler,
-) {
+): OperatorFunction<Action, Action> {
   return pipe(
     ofType(actions.load),
     withLatestFrom(state$),

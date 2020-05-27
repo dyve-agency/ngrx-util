@@ -1,15 +1,13 @@
-import {ErrorHandler} from '@angular/core';
 import {createEffect} from '@ngrx/effects';
 import {createReducer} from '@ngrx/store';
-import exp from 'constants';
 import {cold, hot} from 'jest-marbles';
 import {of, throwError} from 'rxjs';
-import {take, tap} from 'rxjs/operators';
 import {createLoadActions, createLoadEffect, createLoadReducer, initial, ResourceState} from '../../lib/load-data';
 
 describe('load-data/creators', () => {
   describe('createLoadActions', () => {
     it('creates 3 actions: load, success, failed', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-types
       const actions = createLoadActions<{}>('foobar');
 
       expect(actions.load.type).toEqual('[foobar] Load');
@@ -20,6 +18,7 @@ describe('load-data/creators', () => {
 
   describe('initial', () => {
     it('should create an initial state with default values', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-types
       const state = initial<{}, void>({});
 
       expect(state.results).toEqual({});
@@ -34,15 +33,11 @@ describe('load-data/creators', () => {
     type TestState = ResourceState<string[], {foo: string}>;
     const actions = createLoadActions<string[], {foo: string}>('foobar');
     const initialState = initial<string[], {foo: string}>([]);
-    const reducer = createReducer<TestState>(
-      initialState,
-      ...createLoadReducer<string[], TestState, {foo: string}>(actions),
-    );
 
     it('should create an effect that reacts to load event and dispatches success', () => {
       const actions$ = hot('l', {l: actions.load({params: {foo: 'foo'}})});
       const effect$ = createEffect(() => actions$.pipe(
-        createLoadEffect(actions, (params, state) => {
+        createLoadEffect(actions, () => {
           return of(['loaded', 'resource']);
         }, of(initialState)),
       ));
@@ -54,7 +49,7 @@ describe('load-data/creators', () => {
     it('should create an effect that reacts to load event and dispatches failed on error', () => {
       const actions$ = hot('l', {l: actions.load({params: {foo: 'foo'}})});
       const effect$ = createEffect(() => actions$.pipe(
-        createLoadEffect(actions, (params, state) => {
+        createLoadEffect(actions, () => {
           return throwError('something is wrong');
         }, of(initialState)),
       ));
@@ -63,14 +58,14 @@ describe('load-data/creators', () => {
         .toBeObservable(cold('f', {f: actions.failed({params: {foo: 'foo'}})}));
     });
 
-    it('should report errors to an error handler', async () => {
+    it('should report errors to an error handler', async() => {
       const errorHandler = {
         handleError: jest.fn(),
       };
 
       const actions$ = of(actions.load({params: {foo: 'foo'}}));
       const effect$ = createEffect(() => actions$.pipe(
-        createLoadEffect(actions, (params, state) => {
+        createLoadEffect(actions, () => {
           return throwError('something is wrong');
         }, of(initialState), errorHandler),
       ));

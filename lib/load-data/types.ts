@@ -5,12 +5,12 @@
 import {ActionCreator} from '@ngrx/store';
 import {TypedAction} from '@ngrx/store/src/models';
 
-export interface LoadActionPayload<T> {
-  data: T;
+export interface LoadActionPayload<TResource> {
+  data: TResource;
 }
 
-export interface ParamsPayload<P> {
-  params: P;
+export interface ParamsPayload<TParams> {
+  params: TParams;
 }
 
 /**
@@ -59,7 +59,7 @@ export interface ResourceState<TResource, TParams = void> {
  *
  * @param initialValue
  */
-export function initial<T, P>(initialValue: T): ResourceState<T, P> {
+export function initial<TResource, TParams>(initialValue: TResource): ResourceState<TResource, TParams> {
   return {
     loaded: false,
     loading: false,
@@ -69,26 +69,26 @@ export function initial<T, P>(initialValue: T): ResourceState<T, P> {
   };
 }
 
-export type LoadActionCreator<T, P = void> = ActionCreator<string, (props: ParamsPayload<P>) => ParamsPayload<P> & TypedAction<string>>;
-export type SuccessActionCreator<T, P = void> = ActionCreator<string, (props: LoadActionPayload<T> & ParamsPayload<P>) => LoadActionPayload<T> & ParamsPayload<P> & TypedAction<string>>;
-export type FailedActionCreator<P = void> = ActionCreator<string, (props: ParamsPayload<P>) => ParamsPayload<P> & TypedAction<string>>;
+export type LoadActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
+export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<string, (props: LoadActionPayload<TResource> & ParamsPayload<TParams>) => LoadActionPayload<TResource> & ParamsPayload<TParams> & TypedAction<string>>;
+export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
 
 /**
  * A collection of actions that facilitate resource loading.
  */
-export interface LoadActions<T, P = void> {
+export interface LoadActions<TResource, TParams = void> {
   /**
    * Dispatch this action to trigger the loading of a resource.
    */
-  load: LoadActionCreator<T, P>;
+  load: LoadActionCreator<TResource, TParams>;
 
   /**
    * Listen for this event to know when loading finished successfully.
    */
-  success: SuccessActionCreator<T, P>;
+  success: SuccessActionCreator<TResource, TParams>;
 
   /**
    * This event indicates a failure in the load effect.
    */
-  failed: FailedActionCreator<P>;
+  failed: FailedActionCreator<TParams>;
 }
