@@ -1,14 +1,9 @@
-import {
-  ActionReducer,
-  ActionReducerMap,
-  createFeatureSelector, createReducer,
-  createSelector,
-  MetaReducer,
-} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createReducer, createSelector, MetaReducer} from '@ngrx/store';
 import {createLoadActions, createLoadReducer, initial, ResourceState} from '@zeit-dev/ngrx-util';
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 
 export const todosActions = createLoadActions<Todo[]>('todos');
+
 export interface Todo {
   userId: number;
   id: number;
@@ -32,8 +27,7 @@ export const appFeatureSelector = createFeatureSelector<AppState>(appFeatureKey)
 export const todosSelector = createSelector(appFeatureSelector, (state) => state.todos);
 
 export const reducers: ActionReducerMap<AppState> = {
-  todos: createReducer(initial<Todo[], void>([]), ...createLoadReducer<Todo[], TodosResource>(todosActions))
+  todos: createReducer(initial<Todo[], void>([]), ...createLoadReducer<Todo[], TodosResource>(todosActions)),
 };
-
 
 export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [] : [];
