@@ -62,7 +62,7 @@
 					<a href="simple_loadable_data.loadactions.html">LoadActions</a>
 				</li>
 			</ul>
-			<h1>Interface LoadActions&lt;T, P&gt;</h1>
+			<h1>Interface LoadActions&lt;TResource, TParams&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -80,10 +80,10 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>T</h4>
+						<h4>TResource</h4>
 					</li>
 					<li>
-						<h4>P</h4>
+						<h4>TParams</h4>
 					</li>
 				</ul>
 			</section>
@@ -115,10 +115,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="failed" class="tsd-anchor"></a>
 					<h3>failed</h3>
-					<div class="tsd-signature tsd-kind-icon">failed<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#failedactioncreator" class="tsd-signature-type">FailedActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">P</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">failed<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#failedactioncreator" class="tsd-signature-type">FailedActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TParams</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/8b69558/lib/load-data/types.ts#L93">load-data/types.ts:93</a></li>
+							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/a7e6f1b/lib/load-data/types.ts#L93">load-data/types.ts:93</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -130,10 +130,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="load" class="tsd-anchor"></a>
 					<h3>load</h3>
-					<div class="tsd-signature tsd-kind-icon">load<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#loadactioncreator" class="tsd-signature-type">LoadActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">P</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">load<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#loadactioncreator" class="tsd-signature-type">LoadActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResource</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TParams</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/8b69558/lib/load-data/types.ts#L83">load-data/types.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/a7e6f1b/lib/load-data/types.ts#L83">load-data/types.ts:83</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -145,10 +145,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="success" class="tsd-anchor"></a>
 					<h3>success</h3>
-					<div class="tsd-signature tsd-kind-icon">success<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#successactioncreator" class="tsd-signature-type">SuccessActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">P</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">success<span class="tsd-signature-symbol">:</span> <a href="../modules/simple_loadable_data.html#successactioncreator" class="tsd-signature-type">SuccessActionCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResource</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TParams</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/8b69558/lib/load-data/types.ts#L88">load-data/types.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/cice/ngrx-util/blob/a7e6f1b/lib/load-data/types.ts#L88">load-data/types.ts:88</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -164,12 +164,6 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/_load_data_index_.html">&quot;load-<wbr>data/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/_public_api_.html">&quot;public-<wbr>api&quot;</a>
 					</li>
 					<li class="current tsd-kind-module">
 						<a href="../modules/simple_loadable_data.html">simple-<wbr>loadable-<wbr>data</a>
