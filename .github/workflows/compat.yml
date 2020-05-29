@@ -68,6 +68,6 @@ jobs:
             ${{ runner.os }}-yarn-${{ matrix.ng }}-
       - run: |
           yarn install --frozen-lockfile
-          yarn add @ngrx/store@${{ matrix.ngrx }} @ngrx/effects@${{ matrix.ngrx }} @angular/core${{ matrix.ng }}
+          yarn add @ngrx/store@${{ matrix.ngrx }} @ngrx/effects@${{ matrix.ngrx }} @angular/core@${{ matrix.ng }}
       - run: |
           yarn lint
