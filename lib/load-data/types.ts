@@ -5,12 +5,16 @@
 import {ActionCreator} from '@ngrx/store';
 import {TypedAction} from '@ngrx/store/src/models';
 
-export interface LoadActionPayload<TResource> {
-  data: TResource;
+export interface ExecuteActionPayload<TResource> {
+  data?: TResource;
 }
 
 export interface ParamsPayload<TParams> {
   params: TParams;
+}
+
+export interface FailedParamsPayload {
+  errorMsg?: string;
 }
 
 /**
@@ -48,6 +52,12 @@ export interface ResourceState<TResource, TParams = void> {
    * stores these params.
    */
   loadingParams: TParams | undefined;
+
+  /**
+   * If error happened and has a error message,
+   * store it.
+   */
+  errorMsg: string | undefined;
 }
 
 /**
@@ -66,21 +76,22 @@ export function initial<TResource, TParams>(initialValue: TResource): ResourceSt
     results: initialValue,
     lastParams: undefined,
     loadingParams: undefined,
+    errorMsg: undefined,
   };
 }
 
-export type LoadActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
-export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<string, (props: LoadActionPayload<TResource> & ParamsPayload<TParams>) => LoadActionPayload<TResource> & ParamsPayload<TParams> & TypedAction<string>>;
-export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
+export type ExecuteActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
+export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>) => ExecuteActionPayload<TResource> & ParamsPayload<TParams> & TypedAction<string>>;
+export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: FailedParamsPayload) => FailedParamsPayload & TypedAction<string>>;
 
 /**
  * A collection of actions that facilitate resource loading.
  */
-export interface LoadActions<TResource, TParams = void> {
+export interface ExecuteActions<TResource, TParams = void> {
   /**
    * Dispatch this action to trigger the loading of a resource.
    */
-  load: LoadActionCreator<TResource, TParams>;
+  execute: ExecuteActionCreator<TResource, TParams>;
 
   /**
    * Listen for this event to know when loading finished successfully.
@@ -90,5 +101,8 @@ export interface LoadActions<TResource, TParams = void> {
   /**
    * This event indicates a failure in the load effect.
    */
-  failed: FailedActionCreator<TParams>;
+  failed: FailedActionCreator;
 }
+
+export const NO_PARAMS = {params: undefined};
+
