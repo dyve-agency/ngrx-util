@@ -7,6 +7,7 @@ import { ofType } from "@ngrx/effects";
 import { Action, createAction, on, props, ReducerTypes } from "@ngrx/store";
 import { Observable, of, OperatorFunction, pipe } from "rxjs";
 import { catchError, exhaustMap, map, withLatestFrom } from "rxjs/operators";
+import { failedRS, loadedRS, loadingRS } from "./helpers";
 import {
   ExecuteActionPayload,
   ExecuteActions,
@@ -58,9 +59,7 @@ export function createExecuteReducer<TResource, TState, TParams = void>(
       actions.execute,
       (state: TState, action: ParamsPayload<TParams> & Action) => ({
         ...state,
-        loading: true,
-        loadingParams: action.params,
-        lastError: undefined,
+        ...loadingRS(action.params),
       }),
     ),
     on<TState, [ExecuteActions<TResource, TParams>["success"]]>(
@@ -72,22 +71,14 @@ export function createExecuteReducer<TResource, TState, TParams = void>(
           Action,
       ) => ({
         ...state,
-        loading: false,
-        loadingParams: undefined,
-        lastParams: action.params,
-        loaded: true,
-        results: action.data,
-        errorMsg: undefined,
+        ...loadedRS(action.data, action.params),
       }),
     ),
     on<TState, [ExecuteActions<TResource, TParams>["failed"]]>(
       actions.failed,
       (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
         ...state,
-        loading: false,
-        loadingParams: undefined,
-        loaded: false,
-        errorMsg: action.errorMsg,
+        ...failedRS(action.params, action.errorMsg, action.error),
       }),
     ),
   ] as const;

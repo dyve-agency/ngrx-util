@@ -37,6 +37,11 @@ export interface ResourceState<TResource, TParams = void> {
   loading?: boolean;
 
   /**
+   * Indicates if the last request has failed.
+   */
+  failed?: boolean;
+
+  /**
    * The stores the loaded data.
    * If no data has been loaded yet, contains the initial value (see {@link initialRS}).
    */
@@ -60,34 +65,30 @@ export interface ResourceState<TResource, TParams = void> {
    */
   lastErrorMsg?: string | undefined;
   lastError?: unknown;
+  failedParams?: TParams;
 }
 
-/**
- * "Constructor" for an empty/initial resource state.
- * You have to supply an initial/'null'-value for the {@link ResourceState.results}.
- * For object you would typically use `ResourceState<MyClass | undefined, void>` with
- * `initial<MyClass, void>(undefined)` (or `null` if you prefer).
- * For lists, the best choice is usually an empty list: `initial<MyClass[], void>([])`.
- *
- * @param initialValue
- */
-export function initialRS<TResource, TParams>(
-  initialValue: TResource,
-): ResourceState<TResource, TParams> {
-  return {
-    results: initialValue,
-  };
-}
-
-export type ExecuteActionType<TName extends string = string> = `[${TName}] Execute`;
-export type ExecuteActionCreator<TResource, TParams = void, TName extends string = string> = ActionCreator<
+export type ExecuteActionType<
+  TName extends string = string
+> = `[${TName}] Execute`;
+export type ExecuteActionCreator<
+  TResource,
+  TParams = void,
+  TName extends string = string
+> = ActionCreator<
   ExecuteActionType<TName>,
   (
     props: ParamsPayload<TParams>,
   ) => ParamsPayload<TParams> & TypedAction<ExecuteActionType<TName>>
 >;
-export type SuccessActionType<TName extends string = string> = `[${TName}] Execute Success`;
-export type SuccessActionCreator<TResource, TParams = void, TName extends string = string> = ActionCreator<
+export type SuccessActionType<
+  TName extends string = string
+> = `[${TName}] Execute Success`;
+export type SuccessActionCreator<
+  TResource,
+  TParams = void,
+  TName extends string = string
+> = ActionCreator<
   SuccessActionType<TName>,
   (
     props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>,
@@ -95,8 +96,13 @@ export type SuccessActionCreator<TResource, TParams = void, TName extends string
     ParamsPayload<TParams> &
     TypedAction<SuccessActionType<TName>>
 >;
-export type FailedActionType<TName extends string = string> = `[${TName}] Execute Failed`;
-export type FailedActionCreator<TParams = void, TName extends string = string> = ActionCreator<
+export type FailedActionType<
+  TName extends string = string
+> = `[${TName}] Execute Failed`;
+export type FailedActionCreator<
+  TParams = void,
+  TName extends string = string
+> = ActionCreator<
   FailedActionType<TName>,
   (
     props: FailedParamsPayload<TParams>,
@@ -106,21 +112,25 @@ export type FailedActionCreator<TParams = void, TName extends string = string> =
 /**
  * A collection of actions that facilitate resource loading.
  */
-export interface ExecuteActions<TResource, TParams = void, TName extends string = string> {
+export interface ExecuteActions<
+  TResource,
+  TParams = void,
+  TName extends string = string
+> {
   /**
    * Dispatch this action to trigger the loading of a resource.
    */
-  execute: ExecuteActionCreator<TResource, TParams,TName>;
+  execute: ExecuteActionCreator<TResource, TParams, TName>;
 
   /**
    * Listen for this event to know when loading finished successfully.
    */
-  success: SuccessActionCreator<TResource, TParams,TName>;
+  success: SuccessActionCreator<TResource, TParams, TName>;
 
   /**
    * This event indicates a failure in the load effect.
    */
-  failed: FailedActionCreator<TParams,TName>;
+  failed: FailedActionCreator<TParams, TName>;
 }
 
 export const NO_PARAMS = { params: undefined };
