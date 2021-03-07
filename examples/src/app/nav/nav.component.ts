@@ -1,16 +1,20 @@
-import { Component } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Component } from "@angular/core";
+import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { Observable } from "rxjs";
+import { map, shareReplay } from "rxjs/operators";
 
 @Component({
-  selector: 'app-nav',
+  selector: "app-nav",
   template: `
     <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #drawer class="sidenav" fixedInViewport
-          [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-          [mode]="(isHandset$ | async) ? 'over' : 'side'"
-          [opened]="(isHandset$ | async) === false">
+      <mat-sidenav
+        #drawer
+        class="sidenav"
+        fixedInViewport
+        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'"
+        [opened]="(isHandset$ | async) === false"
+      >
         <mat-toolbar>Examples</mat-toolbar>
         <mat-nav-list>
           <a mat-list-item href="#">Link 1</a>
@@ -25,7 +29,8 @@ import { map, shareReplay } from 'rxjs/operators';
             aria-label="Toggle sidenav"
             mat-icon-button
             (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
+            *ngIf="isHandset$ | async"
+          >
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
           <span>examples</span>
@@ -33,37 +38,36 @@ import { map, shareReplay } from 'rxjs/operators';
         <ng-content></ng-content>
       </mat-sidenav-content>
     </mat-sidenav-container>
-    
   `,
-  styles: [`
-    .sidenav-container {
-      height: 100%;
-    }
-    
-    .sidenav {
-      width: 200px;
-    }
-    
-    .sidenav .mat-toolbar {
-      background: inherit;
-    }
-    
-    .mat-toolbar.mat-primary {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    
-  `]
+  styles: [
+    `
+      .sidenav-container {
+        height: 100%;
+      }
+
+      .sidenav {
+        width: 200px;
+      }
+
+      .sidenav .mat-toolbar {
+        background: inherit;
+      }
+
+      .mat-toolbar.mat-primary {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+    `,
+  ],
 })
 export class NavComponent {
-
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
     .pipe(
-      map(result => result.matches),
-      shareReplay()
+      map((result) => result.matches),
+      shareReplay(),
     );
 
   constructor(private breakpointObserver: BreakpointObserver) {}
-
 }

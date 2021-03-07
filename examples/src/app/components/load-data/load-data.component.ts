@@ -1,28 +1,25 @@
-import {Component, OnInit} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {AppStateSlice, todosActions, todosSelector} from '../../reducers';
+import { Component, OnInit } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { AppStateSlice, todosActions, todosSelector } from "../../reducers";
 
 @Component({
-  selector: 'app-load-data',
+  selector: "app-load-data",
   template: `
     <div class="container">
       <div class="row mt4">
         <div class="col-md-12">
           <div class="content-wrapper" *ngIf="todos$ | async as todos">
             <div class="loader-wrapper" *ngIf="todos.loading">
-              <div class="loader">
-              </div>
+              <div class="loader"></div>
             </div>
             <mat-card>
               <mat-card-actions>
-                <button (click)="reload()"
-                        mat-stroked-button>Reload
-                </button>
+                <button (click)="reload()" mat-stroked-button>Reload</button>
               </mat-card-actions>
               <mat-card-content>
                 <mat-selection-list>
                   <mat-list-option *ngFor="let todo of todos.results">
-                    {{todo.title}}
+                    {{ todo.title }}
                   </mat-list-option>
                 </mat-selection-list>
               </mat-card-content>
@@ -33,25 +30,25 @@ import {AppStateSlice, todosActions, todosSelector} from '../../reducers';
     </div>
   `,
   styles: [
-      `
+    `
       :host {
         padding-top: 24px;
         display: block;
       }
-      
+
       .content-wrapper {
         position: relative;
         min-height: 300px;
         height: calc(100vh - 300px);
       }
-      
+
       mat-card {
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         height: 100%;
       }
-      
+
       mat-card-content {
         overflow: auto;
         height: 100%;
@@ -73,17 +70,15 @@ import {AppStateSlice, todosActions, todosSelector} from '../../reducers';
   ],
 })
 export class LoadDataComponent implements OnInit {
-
   readonly todos$ = this._store$.select(todosSelector);
 
-  constructor(private readonly _store$: Store<AppStateSlice>) {
-  }
+  constructor(private readonly _store$: Store<AppStateSlice>) {}
 
   ngOnInit(): void {
-    this._store$.dispatch(todosActions.load({params: undefined}));
+    this._store$.dispatch(todosActions.load({ params: undefined }));
   }
 
   reload() {
-    this._store$.dispatch(todosActions.load({params: undefined}));
+    this._store$.dispatch(todosActions.load({ params: undefined }));
   }
 }

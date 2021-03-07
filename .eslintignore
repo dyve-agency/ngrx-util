@@ -6,3 +6,4 @@ dist
 coverage
 docs
 examples
+dep_matrix.js

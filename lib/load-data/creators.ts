@@ -2,23 +2,42 @@
  * @module simple-loadable-data
  */
 
-import {ErrorHandler} from '@angular/core';
-import {ofType} from '@ngrx/effects';
-import {Action, createAction, On, on, props} from '@ngrx/store';
-import {Observable, of, OperatorFunction, pipe} from 'rxjs';
-import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
-import {LoadActionPayload, LoadActions, ParamsPayload} from './types';
+import { ErrorHandler } from "@angular/core";
+import { ofType } from "@ngrx/effects";
+import { Action, createAction, on, props, ReducerTypes } from "@ngrx/store";
+import { Observable, of, OperatorFunction, pipe } from "rxjs";
+import { catchError, exhaustMap, map, withLatestFrom } from "rxjs/operators";
+import { failedRS, loadedRS, loadingRS } from "./helpers";
+import {
+  ExecuteActionPayload,
+  ExecuteActions,
+  FailedParamsPayload,
+  ParamsPayload,
+} from "./types";
 
 /**
- * Creates a set of {@link LoadActions}
+ * Creates a set of {@link ExecuteActions}
  *
  * @param resource a unique name for this loaded resource.
  */
-export function createLoadActions<TResource, TParams = void>(resource: string): LoadActions<TResource, TParams> {
+export function createExecuteActions<
+  TResource,
+  TParams = void,
+  TName extends string = string
+>(resource: TName): ExecuteActions<TResource, TParams> {
   return {
-    load: createAction(`[${resource}] Load`, props<ParamsPayload<TParams>>()),
-    success: createAction(`[${resource}] Load Success`, props<LoadActionPayload<TResource> & ParamsPayload<TParams>>()),
-    failed: createAction(`[${resource}] Load Failed`, props<ParamsPayload<TParams>>()),
+    execute: createAction(
+      `[${resource}] Execute` as const,
+      props<ParamsPayload<TParams>>(),
+    ),
+    success: createAction(
+      `[${resource}] Execute Success` as const,
+      props<ExecuteActionPayload<TResource> & ParamsPayload<TParams>>(),
+    ),
+    failed: createAction(
+      `[${resource}] Execute Failed` as const,
+      props<FailedParamsPayload<TParams>>(),
+    ),
   };
 }
 
@@ -28,34 +47,41 @@ export function createLoadActions<TResource, TParams = void>(resource: string): 
  *
  * @param actions
  */
-export function createLoadReducer<TResource, TState, TParams = void>(actions: LoadActions<TResource, TParams>): On<TState>[] {
+export function createExecuteReducer<TResource, TState, TParams = void>(
+  actions: ExecuteActions<TResource, TParams>,
+): readonly [
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["execute"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["success"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["failed"]]>,
+] {
   return [
-    on<LoadActions<TResource, TParams>['load'], TState>(
-      actions.load,
+    on<TState, [ExecuteActions<TResource, TParams>["execute"]]>(
+      actions.execute,
       (state: TState, action: ParamsPayload<TParams> & Action) => ({
         ...state,
-        loading: true,
-        loadingParams: action.params,
+        ...loadingRS(action.params),
       }),
     ),
-    on<LoadActions<TResource, TParams>['success'], TState>(
+    on<TState, [ExecuteActions<TResource, TParams>["success"]]>(
       actions.success,
-      (state: TState, action: LoadActionPayload<TResource> & ParamsPayload<TParams> & Action) => ({
+      (
+        state: TState,
+        action: ExecuteActionPayload<TResource> &
+          ParamsPayload<TParams> &
+          Action,
+      ) => ({
         ...state,
-        loading: false,
-        loadingParams: undefined,
-        lastParams: action.params,
-        loaded: true,
-        results: action.data,
+        ...loadedRS(action.data, action.params),
       }),
     ),
-    on<TState>(actions.failed, (state: TState) => ({
-      ...state,
-      loading: false,
-      loadingParams: undefined,
-      loaded: false,
-    })),
-  ];
+    on<TState, [ExecuteActions<TResource, TParams>["failed"]]>(
+      actions.failed,
+      (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
+        ...state,
+        ...failedRS(action.params, action.errorMsg, action.error),
+      }),
+    ),
+  ] as const;
 }
 
 /**
@@ -67,23 +93,36 @@ export function createLoadReducer<TResource, TState, TParams = void>(actions: Lo
  * @param state$ the state observable (store, or a selected sub-state to be used in `loadAndMap`)
  * @param errorHandler an optional (Angular) error handler to report failures to
  */
-export function createLoadEffect<TResource, TParams, TState>(
-  actions: LoadActions<TResource, TParams>,
+export function createExecuteEffect<
+  TResource,
+  TParams,
+  TState,
+  TName extends string = string
+>(
+  actions: ExecuteActions<TResource, TParams, TName>,
   loadAndMap: (params: TParams, state: TState) => Observable<TResource>,
   state$: Observable<TState>,
   errorHandler?: ErrorHandler,
 ): OperatorFunction<Action, Action> {
   return pipe(
-    ofType(actions.load),
+    ofType(actions.execute),
     withLatestFrom(state$),
     exhaustMap(([action, state]) => {
       return loadAndMap(action.params, state).pipe(
-        map((response) => actions.success({data: response, params: action.params})),
+        map((response) =>
+          actions.success({ data: response, params: action.params }),
+        ),
         catchError((e) => {
           if (errorHandler) {
             errorHandler.handleError(e);
           }
-          return of(actions.failed({params: action.params}));
+          return of(
+            actions.failed({
+              params: action.params,
+              error: e,
+              errorMsg: e.error ? e.error.error : "",
+            }),
+          );
         }),
       );
     }),
