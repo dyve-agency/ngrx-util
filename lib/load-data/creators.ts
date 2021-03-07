@@ -11,6 +11,7 @@ import { failedRS, loadedRS, loadingRS } from "./helpers";
 import {
   ExecuteActionPayload,
   ExecuteActions,
+  ExecuteReducerTypes,
   FailedParamsPayload,
   ParamsPayload,
 } from "./types";
@@ -24,9 +25,13 @@ export function createExecuteActions<
   TResource,
   TParams = void,
   TName extends string = string
->(resource: TName): ExecuteActions<TResource, TParams> {
+>(resource: TName): ExecuteActions<TResource, TParams, TName> {
   return {
     execute: createAction(
+      `[${resource}] Execute` as const,
+      props<ParamsPayload<TParams>>(),
+    ),
+    load: createAction(
       `[${resource}] Execute` as const,
       props<ParamsPayload<TParams>>(),
     ),
@@ -42,27 +47,34 @@ export function createExecuteActions<
 }
 
 /**
+ * @deprecated
+ */
+export const createLoadActions = createExecuteActions;
+
+/**
  * Creates the reducer hooks necessary to reflect the current loading
  * state + loaded data in the state.
  *
  * @param actions
  */
-export function createExecuteReducer<TResource, TState, TParams = void>(
-  actions: ExecuteActions<TResource, TParams>,
-): readonly [
-  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["execute"]]>,
-  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["success"]]>,
-  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["failed"]]>,
-] {
+export function createExecuteReducer<
+  TResource,
+  TState,
+  TParams = void,
+  TName extends string = string
+>(
+  actions: ExecuteActions<TResource, TParams, TName>,
+): ExecuteReducerTypes<TResource, TState, TParams> {
   return [
-    on<TState, [ExecuteActions<TResource, TParams>["execute"]]>(
+    on<TState, [ExecuteActions<TResource, TParams, TName>["execute"]]>(
       actions.execute,
       (state: TState, action: ParamsPayload<TParams> & Action) => ({
         ...state,
         ...loadingRS(action.params),
       }),
     ),
-    on<TState, [ExecuteActions<TResource, TParams>["success"]]>(
+
+    on<TState, [ExecuteActions<TResource, TParams, TName>["success"]]>(
       actions.success,
       (
         state: TState,
@@ -74,15 +86,27 @@ export function createExecuteReducer<TResource, TState, TParams = void>(
         ...loadedRS(action.data, action.params),
       }),
     ),
-    on<TState, [ExecuteActions<TResource, TParams>["failed"]]>(
+    on<TState, [ExecuteActions<TResource, TParams, TName>["failed"]]>(
       actions.failed,
       (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
         ...state,
         ...failedRS(action.params, action.errorMsg, action.error),
       }),
     ),
+    on<TState, [ExecuteActions<TResource, TParams, TName>["load"]]>(
+      actions.load,
+      (state: TState, action: ParamsPayload<TParams> & Action) => ({
+        ...state,
+        ...loadingRS(action.params),
+      }),
+    ),
   ] as const;
 }
+
+/**
+ * @deprecated
+ */
+export const createLoadReducer = createExecuteReducer;
 
 /**
  * Creates a load-effect for the given load-actions
@@ -128,3 +152,8 @@ export function createExecuteEffect<
     }),
   );
 }
+
+/**
+ * @deprecated
+ */
+export const createLoadEffect = createExecuteEffect;

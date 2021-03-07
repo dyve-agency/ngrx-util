@@ -2,12 +2,18 @@
  * @module simple-loadable-data
  */
 
-import { ActionCreator } from "@ngrx/store";
+import { ActionCreator, ReducerTypes } from "@ngrx/store";
 import { TypedAction } from "@ngrx/store/src/models";
+import { OnReducer } from "@ngrx/store/src/reducer_creator";
 
 export interface ExecuteActionPayload<TResource> {
-  data?: TResource;
+  data: TResource;
 }
+
+/**
+ * @deprecated
+ */
+export type LoadActionPayload<TResource> = ExecuteActionPayload<TResource>;
 
 export interface ParamsPayload<TParams> {
   params: TParams;
@@ -71,6 +77,7 @@ export interface ResourceState<TResource, TParams = void> {
 export type ExecuteActionType<
   TName extends string = string
 > = `[${TName}] Execute`;
+
 export type ExecuteActionCreator<
   TResource,
   TParams = void,
@@ -81,9 +88,19 @@ export type ExecuteActionCreator<
     props: ParamsPayload<TParams>,
   ) => ParamsPayload<TParams> & TypedAction<ExecuteActionType<TName>>
 >;
+
+/**
+ * @deprecated
+ */
+export type LoadActionCreator<TResource, TParams = void> = ExecuteActionCreator<
+  TResource,
+  TParams
+>;
+
 export type SuccessActionType<
   TName extends string = string
 > = `[${TName}] Execute Success`;
+
 export type SuccessActionCreator<
   TResource,
   TParams = void,
@@ -96,9 +113,11 @@ export type SuccessActionCreator<
     ParamsPayload<TParams> &
     TypedAction<SuccessActionType<TName>>
 >;
+
 export type FailedActionType<
   TName extends string = string
 > = `[${TName}] Execute Failed`;
+
 export type FailedActionCreator<
   TParams = void,
   TName extends string = string
@@ -123,6 +142,11 @@ export interface ExecuteActions<
   execute: ExecuteActionCreator<TResource, TParams, TName>;
 
   /**
+   * @deprecated
+   */
+  load: ExecuteActions<TResource, TParams>["execute"];
+
+  /**
    * Listen for this event to know when loading finished successfully.
    */
   success: SuccessActionCreator<TResource, TParams, TName>;
@@ -133,4 +157,27 @@ export interface ExecuteActions<
   failed: FailedActionCreator<TParams, TName>;
 }
 
+/**
+ * @deprecated
+ */
+export type LoadActions<TResource, TParams = void> = ExecuteActions<
+  TResource,
+  TParams
+>;
+
 export const NO_PARAMS = { params: undefined };
+
+export type On<Reducer extends ActionCreator, State> = OnReducer<
+  State,
+  Reducer[]
+>;
+
+export type ExecuteReducerTypes<TResource, TState, TParams = void> = readonly [
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["execute"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["success"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["failed"]]>,
+  /**
+   * @deprecated
+   */
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["execute"]]>,
+];
