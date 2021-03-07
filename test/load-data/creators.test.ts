@@ -2,7 +2,7 @@ import {createEffect} from '@ngrx/effects';
 import {createReducer} from '@ngrx/store';
 import {cold, hot} from 'jest-marbles';
 import {of, throwError} from 'rxjs';
-import {createExecuteActions, createExecuteEffect, createExecuteReducer, initial, ResourceState} from '../../lib/load-data';
+import {createExecuteActions, createExecuteEffect, createExecuteReducer, initialRS, ResourceState} from '../../lib/load-data';
 
 describe('load-data/creators', () => {
   describe('createExecuteActions', () => {
@@ -10,16 +10,16 @@ describe('load-data/creators', () => {
       // eslint-disable-next-line @typescript-eslint/ban-types
       const actions = createExecuteActions<{}>('foobar');
 
-      expect(actions.execute.type).toEqual('[foobar] Load');
-      expect(actions.success.type).toEqual('[foobar] Load Success');
-      expect(actions.failed.type).toEqual('[foobar] Load Failed');
+      expect(actions.execute.type).toEqual('[foobar] Execute');
+      expect(actions.success.type).toEqual('[foobar] Execute Success');
+      expect(actions.failed.type).toEqual('[foobar] Execute Failed');
     });
   });
 
   describe('initial', () => {
     it('should create an initial state with default values', () => {
       // eslint-disable-next-line @typescript-eslint/ban-types
-      const state = initial<{}, void>({});
+      const state = initialRS<{}, void>({});
 
       expect(state.results).toEqual({});
       expect(state.loaded).toBeFalsy();
@@ -32,7 +32,7 @@ describe('load-data/creators', () => {
   describe('createExecuteEffect', () => {
     type TestState = ResourceState<string[], {foo: string}>;
     const actions = createExecuteActions<string[], {foo: string}>('foobar');
-    const initialState = initial<string[], {foo: string}>([]);
+    const initialState = initialRS<string[], {foo: string}>([]);
 
     it('should create an effect that reacts to load event and dispatches success', () => {
       const actions$ = hot('l', {l: actions.execute({params: {foo: 'foo'}})});
@@ -55,7 +55,7 @@ describe('load-data/creators', () => {
       ));
 
       expect(effect$)
-        .toBeObservable(cold('f', {f: actions.failed({params: {foo: 'foo'}})}));
+        .toBeObservable(cold('f', {f: actions.failed({params: {foo: 'foo'}, error: 'something is wrong', errorMsg: ''})}));
     });
 
     it('should report errors to an error handler', async() => {
@@ -79,7 +79,7 @@ describe('load-data/creators', () => {
     describe('reducer without params', () => {
       type TestState = ResourceState<string[]>;
       const actions = createExecuteActions<string[]>('foobar');
-      const state = initial<string[], void>([]);
+      const state = initialRS<string[], void>([]);
       const reducer = createReducer<TestState>(state, ...createExecuteReducer<string[], TestState>(actions));
 
       it('reduces execute event', () => {
@@ -108,7 +108,7 @@ describe('load-data/creators', () => {
     describe('reducer with params', () => {
       type TestState = ResourceState<string[], {foo: string}>;
       const actions = createExecuteActions<string[], {foo: string}>('foobar');
-      const state = initial<string[], {foo: string}>([]);
+      const state = initialRS<string[], {foo: string}>([]);
       const reducer = createReducer<TestState>(
         state,
         ...createExecuteReducer<string[], TestState, {foo: string}>(actions),

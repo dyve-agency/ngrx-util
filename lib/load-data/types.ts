@@ -13,7 +13,8 @@ export interface ParamsPayload<TParams> {
   params: TParams;
 }
 
-export interface FailedParamsPayload {
+export interface FailedParamsPayload<TParams> extends ParamsPayload<TParams>{
+  error?: unknown;
   errorMsg?: string;
 }
 
@@ -25,7 +26,7 @@ export interface ResourceState<TResource, TParams = void> {
    * Has this resource been loaded?
    * `true` *after* the success action
    */
-  loaded: boolean;
+  loaded?: boolean;
 
   /**
    * Is this resource currently loading?
@@ -33,11 +34,11 @@ export interface ResourceState<TResource, TParams = void> {
    * `true` *after* the load action,
    * `false` *after* success or fail
    */
-  loading: boolean;
+  loading?: boolean;
 
   /**
    * The stores the loaded data.
-   * If no data has been loaded yet, contains the initial value (see {@link initial}).
+   * If no data has been loaded yet, contains the initial value (see {@link initialRS}).
    */
   results: TResource;
 
@@ -45,19 +46,20 @@ export interface ResourceState<TResource, TParams = void> {
    * If data has been loaded, and was loaded with params,
    * stores these params of the last request.
    */
-  lastParams: TParams | undefined;
+  lastParams?: TParams | undefined;
 
   /**
    * If data is currently loading, and loading was requested with params,
    * stores these params.
    */
-  loadingParams: TParams | undefined;
+  loadingParams?: TParams | undefined;
 
   /**
    * If error happened and has a error message,
    * store it.
    */
-  errorMsg: string | undefined;
+  lastErrorMsg?: string | undefined;
+  lastError?: unknown;
 }
 
 /**
@@ -69,20 +71,15 @@ export interface ResourceState<TResource, TParams = void> {
  *
  * @param initialValue
  */
-export function initial<TResource, TParams>(initialValue: TResource): ResourceState<TResource, TParams> {
+export function initialRS<TResource, TParams>(initialValue: TResource): ResourceState<TResource, TParams> {
   return {
-    loaded: false,
-    loading: false,
     results: initialValue,
-    lastParams: undefined,
-    loadingParams: undefined,
-    errorMsg: undefined,
   };
 }
 
 export type ExecuteActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
 export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>) => ExecuteActionPayload<TResource> & ParamsPayload<TParams> & TypedAction<string>>;
-export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: FailedParamsPayload) => FailedParamsPayload & TypedAction<string>>;
+export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: FailedParamsPayload<TParams>) => FailedParamsPayload<TParams> & TypedAction<string>>;
 
 /**
  * A collection of actions that facilitate resource loading.
@@ -101,7 +98,7 @@ export interface ExecuteActions<TResource, TParams = void> {
   /**
    * This event indicates a failure in the load effect.
    */
-  failed: FailedActionCreator;
+  failed: FailedActionCreator<TParams>;
 }
 
 export const NO_PARAMS = {params: undefined};

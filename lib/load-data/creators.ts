@@ -4,7 +4,7 @@
 
 import {ErrorHandler} from '@angular/core';
 import {ofType} from '@ngrx/effects';
-import {Action, createAction, On, on, props} from '@ngrx/store';
+import {Action, createAction,  on, props} from '@ngrx/store';
 import {Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
 import {ExecuteActionPayload, ExecuteActions, FailedParamsPayload, ParamsPayload} from './types';
@@ -18,7 +18,7 @@ export function createExecuteActions<TResource, TParams = void>(resource: string
   return {
     execute: createAction(`[${resource}] Execute`, props<ParamsPayload<TParams>>()),
     success: createAction(`[${resource}] Execute Success`, props<ExecuteActionPayload<TResource> & ParamsPayload<TParams>>()),
-    failed: createAction(`[${resource}] Execute Failed`, props<FailedParamsPayload>()),
+    failed: createAction(`[${resource}] Execute Failed`, props<FailedParamsPayload<TParams>>()),
   };
 }
 
@@ -28,18 +28,18 @@ export function createExecuteActions<TResource, TParams = void>(resource: string
  *
  * @param actions
  */
-export function createExecuteReducer<TResource, TState, TParams = void>(actions: ExecuteActions<TResource, TParams>): Array<On<TState>> {
+export function createExecuteReducer<TResource, TState, TParams = void>(actions: ExecuteActions<TResource, TParams>) {
   return [
-    on<ExecuteActions<TResource, TParams>['execute'], TState>(
+    on<TState, [ExecuteActions<TResource, TParams>['execute']]>(
       actions.execute,
       (state: TState, action: ParamsPayload<TParams> & Action) => ({
         ...state,
         loading: true,
         loadingParams: action.params,
-        errorMsg: undefined,
+        lastError: undefined,
       }),
     ),
-    on<ExecuteActions<TResource, TParams>['success'], TState>(
+    on<TState, [ExecuteActions<TResource, TParams>['success']]>(
       actions.success,
       (state: TState, action: ExecuteActionPayload<TResource> & ParamsPayload<TParams> & Action) => ({
         ...state,
@@ -51,8 +51,8 @@ export function createExecuteReducer<TResource, TState, TParams = void>(actions:
         errorMsg: undefined,
       }),
     ),
-    on<ExecuteActions<TResource, TParams>['failed'], TState>(
-      actions.failed, (state: TState, action: ExecuteActionPayload<TResource> & FailedParamsPayload & Action) => ({
+    on<TState, [ExecuteActions<TResource, TParams>['failed']]>(
+      actions.failed, (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
         ...state,
         loading: false,
         loadingParams: undefined,
@@ -87,7 +87,11 @@ export function createExecuteEffect<TResource, TParams, TState>(
           if (errorHandler) {
             errorHandler.handleError(e);
           }
-          return of(actions.failed({errorMsg: e.error ? e.error.error : ''}));
+          return of(actions.failed({
+            params: action.params,
+            error: e,
+            errorMsg: e.error ? e.error.error : ''
+          }));
         }),
       );
     }),
