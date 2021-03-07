@@ -2,8 +2,8 @@
  * @module simple-loadable-data
  */
 
-import {ActionCreator} from '@ngrx/store';
-import {TypedAction} from '@ngrx/store/src/models';
+import { ActionCreator } from "@ngrx/store";
+import { TypedAction } from "@ngrx/store/src/models";
 
 export interface ExecuteActionPayload<TResource> {
   data?: TResource;
@@ -13,7 +13,7 @@ export interface ParamsPayload<TParams> {
   params: TParams;
 }
 
-export interface FailedParamsPayload<TParams> extends ParamsPayload<TParams>{
+export interface FailedParamsPayload<TParams> extends ParamsPayload<TParams> {
   error?: unknown;
   errorMsg?: string;
 }
@@ -71,15 +71,34 @@ export interface ResourceState<TResource, TParams = void> {
  *
  * @param initialValue
  */
-export function initialRS<TResource, TParams>(initialValue: TResource): ResourceState<TResource, TParams> {
+export function initialRS<TResource, TParams>(
+  initialValue: TResource,
+): ResourceState<TResource, TParams> {
   return {
     results: initialValue,
   };
 }
 
-export type ExecuteActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ParamsPayload<TParams>) => ParamsPayload<TParams> & TypedAction<string>>;
-export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<string, (props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>) => ExecuteActionPayload<TResource> & ParamsPayload<TParams> & TypedAction<string>>;
-export type FailedActionCreator<TParams = void> = ActionCreator<string, (props: FailedParamsPayload<TParams>) => FailedParamsPayload<TParams> & TypedAction<string>>;
+export type ExecuteActionCreator<TResource, TParams = void> = ActionCreator<
+  string,
+  (
+    props: ParamsPayload<TParams>,
+  ) => ParamsPayload<TParams> & TypedAction<string>
+>;
+export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<
+  string,
+  (
+    props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>,
+  ) => ExecuteActionPayload<TResource> &
+    ParamsPayload<TParams> &
+    TypedAction<string>
+>;
+export type FailedActionCreator<TParams = void> = ActionCreator<
+  string,
+  (
+    props: FailedParamsPayload<TParams>,
+  ) => FailedParamsPayload<TParams> & TypedAction<string>
+>;
 
 /**
  * A collection of actions that facilitate resource loading.
@@ -101,5 +120,4 @@ export interface ExecuteActions<TResource, TParams = void> {
   failed: FailedActionCreator<TParams>;
 }
 
-export const NO_PARAMS = {params: undefined};
-
+export const NO_PARAMS = { params: undefined };

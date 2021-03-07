@@ -2,23 +2,39 @@
  * @module simple-loadable-data
  */
 
-import {ErrorHandler} from '@angular/core';
-import {ofType} from '@ngrx/effects';
-import {Action, createAction,  on, props} from '@ngrx/store';
-import {Observable, of, OperatorFunction, pipe} from 'rxjs';
-import {catchError, exhaustMap, map, withLatestFrom} from 'rxjs/operators';
-import {ExecuteActionPayload, ExecuteActions, FailedParamsPayload, ParamsPayload} from './types';
+import { ErrorHandler } from "@angular/core";
+import { ofType } from "@ngrx/effects";
+import { Action, createAction, on, props } from "@ngrx/store";
+import { Observable, of, OperatorFunction, pipe } from "rxjs";
+import { catchError, exhaustMap, map, withLatestFrom } from "rxjs/operators";
+import {
+  ExecuteActionPayload,
+  ExecuteActions,
+  FailedParamsPayload,
+  ParamsPayload,
+} from "./types";
 
 /**
  * Creates a set of {@link ExecuteActions}
  *
  * @param resource a unique name for this loaded resource.
  */
-export function createExecuteActions<TResource, TParams = void>(resource: string): ExecuteActions<TResource, TParams> {
+export function createExecuteActions<TResource, TParams = void>(
+  resource: string,
+): ExecuteActions<TResource, TParams> {
   return {
-    execute: createAction(`[${resource}] Execute`, props<ParamsPayload<TParams>>()),
-    success: createAction(`[${resource}] Execute Success`, props<ExecuteActionPayload<TResource> & ParamsPayload<TParams>>()),
-    failed: createAction(`[${resource}] Execute Failed`, props<FailedParamsPayload<TParams>>()),
+    execute: createAction(
+      `[${resource}] Execute`,
+      props<ParamsPayload<TParams>>(),
+    ),
+    success: createAction(
+      `[${resource}] Execute Success`,
+      props<ExecuteActionPayload<TResource> & ParamsPayload<TParams>>(),
+    ),
+    failed: createAction(
+      `[${resource}] Execute Failed`,
+      props<FailedParamsPayload<TParams>>(),
+    ),
   };
 }
 
@@ -28,9 +44,11 @@ export function createExecuteActions<TResource, TParams = void>(resource: string
  *
  * @param actions
  */
-export function createExecuteReducer<TResource, TState, TParams = void>(actions: ExecuteActions<TResource, TParams>) {
+export function createExecuteReducer<TResource, TState, TParams = void>(
+  actions: ExecuteActions<TResource, TParams>,
+) {
   return [
-    on<TState, [ExecuteActions<TResource, TParams>['execute']]>(
+    on<TState, [ExecuteActions<TResource, TParams>["execute"]]>(
       actions.execute,
       (state: TState, action: ParamsPayload<TParams> & Action) => ({
         ...state,
@@ -39,9 +57,14 @@ export function createExecuteReducer<TResource, TState, TParams = void>(actions:
         lastError: undefined,
       }),
     ),
-    on<TState, [ExecuteActions<TResource, TParams>['success']]>(
+    on<TState, [ExecuteActions<TResource, TParams>["success"]]>(
       actions.success,
-      (state: TState, action: ExecuteActionPayload<TResource> & ParamsPayload<TParams> & Action) => ({
+      (
+        state: TState,
+        action: ExecuteActionPayload<TResource> &
+          ParamsPayload<TParams> &
+          Action,
+      ) => ({
         ...state,
         loading: false,
         loadingParams: undefined,
@@ -51,14 +74,16 @@ export function createExecuteReducer<TResource, TState, TParams = void>(actions:
         errorMsg: undefined,
       }),
     ),
-    on<TState, [ExecuteActions<TResource, TParams>['failed']]>(
-      actions.failed, (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
+    on<TState, [ExecuteActions<TResource, TParams>["failed"]]>(
+      actions.failed,
+      (state: TState, action: FailedParamsPayload<TParams> & Action) => ({
         ...state,
         loading: false,
         loadingParams: undefined,
         loaded: false,
         errorMsg: action.errorMsg,
-      })),
+      }),
+    ),
   ];
 }
 
@@ -82,16 +107,20 @@ export function createExecuteEffect<TResource, TParams, TState>(
     withLatestFrom(state$),
     exhaustMap(([action, state]) => {
       return loadAndMap(action.params, state).pipe(
-        map((response) => actions.success({data: response, params: action.params})),
+        map((response) =>
+          actions.success({ data: response, params: action.params }),
+        ),
         catchError((e) => {
           if (errorHandler) {
             errorHandler.handleError(e);
           }
-          return of(actions.failed({
-            params: action.params,
-            error: e,
-            errorMsg: e.error ? e.error.error : ''
-          }));
+          return of(
+            actions.failed({
+              params: action.params,
+              error: e,
+              errorMsg: e.error ? e.error.error : "",
+            }),
+          );
         }),
       );
     }),

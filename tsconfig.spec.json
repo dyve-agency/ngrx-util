@@ -1,14 +1,8 @@
 {
   "extends": "./tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.test.ts"
-  ],
+  "include": ["src/**/*.ts", "test/**/*.test.ts"],
   "compilerOptions": {
     "esModuleInterop": true,
-    "types": [
-      "node",
-      "jest"
-    ]
+    "types": ["node", "jest"]
   }
 }
