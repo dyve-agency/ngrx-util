@@ -4,7 +4,7 @@
 
 import { ErrorHandler } from "@angular/core";
 import { ofType } from "@ngrx/effects";
-import { Action, createAction, on, props } from "@ngrx/store";
+import { Action, createAction, on, props, ReducerTypes } from "@ngrx/store";
 import { Observable, of, OperatorFunction, pipe } from "rxjs";
 import { catchError, exhaustMap, map, withLatestFrom } from "rxjs/operators";
 import {
@@ -19,20 +19,22 @@ import {
  *
  * @param resource a unique name for this loaded resource.
  */
-export function createExecuteActions<TResource, TParams = void>(
-  resource: string,
-): ExecuteActions<TResource, TParams> {
+export function createExecuteActions<
+  TResource,
+  TParams = void,
+  TName extends string = string
+>(resource: TName): ExecuteActions<TResource, TParams> {
   return {
     execute: createAction(
-      `[${resource}] Execute`,
+      `[${resource}] Execute` as const,
       props<ParamsPayload<TParams>>(),
     ),
     success: createAction(
-      `[${resource}] Execute Success`,
+      `[${resource}] Execute Success` as const,
       props<ExecuteActionPayload<TResource> & ParamsPayload<TParams>>(),
     ),
     failed: createAction(
-      `[${resource}] Execute Failed`,
+      `[${resource}] Execute Failed` as const,
       props<FailedParamsPayload<TParams>>(),
     ),
   };
@@ -46,7 +48,11 @@ export function createExecuteActions<TResource, TParams = void>(
  */
 export function createExecuteReducer<TResource, TState, TParams = void>(
   actions: ExecuteActions<TResource, TParams>,
-) {
+): readonly [
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["execute"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["success"]]>,
+  ReducerTypes<TState, [ExecuteActions<TResource, TParams>["failed"]]>,
+] {
   return [
     on<TState, [ExecuteActions<TResource, TParams>["execute"]]>(
       actions.execute,
@@ -84,7 +90,7 @@ export function createExecuteReducer<TResource, TState, TParams = void>(
         errorMsg: action.errorMsg,
       }),
     ),
-  ];
+  ] as const;
 }
 
 /**
@@ -96,8 +102,13 @@ export function createExecuteReducer<TResource, TState, TParams = void>(
  * @param state$ the state observable (store, or a selected sub-state to be used in `loadAndMap`)
  * @param errorHandler an optional (Angular) error handler to report failures to
  */
-export function createExecuteEffect<TResource, TParams, TState>(
-  actions: ExecuteActions<TResource, TParams>,
+export function createExecuteEffect<
+  TResource,
+  TParams,
+  TState,
+  TName extends string = string
+>(
+  actions: ExecuteActions<TResource, TParams, TName>,
   loadAndMap: (params: TParams, state: TState) => Observable<TResource>,
   state$: Observable<TState>,
   errorHandler?: ErrorHandler,

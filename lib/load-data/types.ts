@@ -79,45 +79,48 @@ export function initialRS<TResource, TParams>(
   };
 }
 
-export type ExecuteActionCreator<TResource, TParams = void> = ActionCreator<
-  string,
+export type ExecuteActionType<TName extends string = string> = `[${TName}] Execute`;
+export type ExecuteActionCreator<TResource, TParams = void, TName extends string = string> = ActionCreator<
+  ExecuteActionType<TName>,
   (
     props: ParamsPayload<TParams>,
-  ) => ParamsPayload<TParams> & TypedAction<string>
+  ) => ParamsPayload<TParams> & TypedAction<ExecuteActionType<TName>>
 >;
-export type SuccessActionCreator<TResource, TParams = void> = ActionCreator<
-  string,
+export type SuccessActionType<TName extends string = string> = `[${TName}] Execute Success`;
+export type SuccessActionCreator<TResource, TParams = void, TName extends string = string> = ActionCreator<
+  SuccessActionType<TName>,
   (
     props: ExecuteActionPayload<TResource> & ParamsPayload<TParams>,
   ) => ExecuteActionPayload<TResource> &
     ParamsPayload<TParams> &
-    TypedAction<string>
+    TypedAction<SuccessActionType<TName>>
 >;
-export type FailedActionCreator<TParams = void> = ActionCreator<
-  string,
+export type FailedActionType<TName extends string = string> = `[${TName}] Execute Failed`;
+export type FailedActionCreator<TParams = void, TName extends string = string> = ActionCreator<
+  FailedActionType<TName>,
   (
     props: FailedParamsPayload<TParams>,
-  ) => FailedParamsPayload<TParams> & TypedAction<string>
+  ) => FailedParamsPayload<TParams> & TypedAction<FailedActionType<TName>>
 >;
 
 /**
  * A collection of actions that facilitate resource loading.
  */
-export interface ExecuteActions<TResource, TParams = void> {
+export interface ExecuteActions<TResource, TParams = void, TName extends string = string> {
   /**
    * Dispatch this action to trigger the loading of a resource.
    */
-  execute: ExecuteActionCreator<TResource, TParams>;
+  execute: ExecuteActionCreator<TResource, TParams,TName>;
 
   /**
    * Listen for this event to know when loading finished successfully.
    */
-  success: SuccessActionCreator<TResource, TParams>;
+  success: SuccessActionCreator<TResource, TParams,TName>;
 
   /**
    * This event indicates a failure in the load effect.
    */
-  failed: FailedActionCreator<TParams>;
+  failed: FailedActionCreator<TParams,TName>;
 }
 
 export const NO_PARAMS = { params: undefined };
